@@ -20,6 +20,8 @@ jobs:
         run: echo "::set-output name=timestamp::$(date +%s)"
       - name: Zip all files except .git and .github and .gitignore and .gitattributes
         run: zip -r release.zip . -x \*.git\* \*.github\* .gitignore .gitattributes
+      - name: Rename release.zip to modname-version-timestamp.zip
+        run: mv release.zip ${{ github.event.inputs.version }}-${{ steps.timestamp.outputs.timestamp }}.zip
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -37,6 +39,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./release.zip
-          asset_name: release.zip
+          asset_path: ${{ github.event.inputs.version }}-${{ steps.timestamp.outputs.timestamp }}.zip
+          asset_name: ${{ github.event.inputs.version }}-${{ steps.timestamp.outputs.timestamp }}.zip
           asset_content_type: application/zip
