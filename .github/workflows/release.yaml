@@ -19,7 +19,7 @@ jobs:
         id: timestamp
         run: echo "::set-output name=timestamp::$(date +%s)"
       - name: Zip all files except .git and .github and .gitignore and .gitattributes
-        run: zip -r release.zip . -x .git/**\* .github/**\* .gitignore .gitattributes
+        run: zip -r release.zip . -x .git/* .github/* .gitignore .gitattributes
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
