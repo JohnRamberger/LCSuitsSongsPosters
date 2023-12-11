@@ -1,4 +1,4 @@
-# on trigger workflow with version number
+# on trigger workflow with version number and append a timestamp to the release name
 name: Release
 on:
   workflow_dispatch:
@@ -15,6 +15,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Get 5 digit timestamp
+        id: timestamp
+        run: echo "::set-output name=timestamp::$(date +%s)"
       - name: Zip all files except .git and .github and .gitignore and .gitattributes
         run: zip -r release.zip . -x .git .github .gitignore .gitattributes
       - name: Create Release
@@ -23,8 +26,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.event.inputs.version }}
-          release_name: Release ${{ github.event.inputs.version }}
+          tag_name: ${{ github.event.inputs.version }}-${{ steps.timestamp.outputs.timestamp }}
+          release_name: ${{ github.event.inputs.version }}-${{ steps.timestamp.outputs.timestamp }}
           draft: false
           prerelease: false
       - name: Upload Release Asset
