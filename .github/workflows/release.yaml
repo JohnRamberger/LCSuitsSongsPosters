@@ -1,9 +1,9 @@
-# on push to main branch, zip the contents of the repo and upload to a release with the version number found in manifest.json
+# on push to master branch, zip the contents of the repo and upload to a release with the version number found in manifest.json
 name: Release
 on:
   push:
     branches:
-      - main
+      - master
 jobs:
   release:
     name: Release
