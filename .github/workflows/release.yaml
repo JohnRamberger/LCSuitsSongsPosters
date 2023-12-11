@@ -1,9 +1,13 @@
-# on push to master branch, zip the contents of the repo and upload to a release with the version number found in manifest.json
+# on trigger workflow with version number
 name: Release
 on:
-  push:
-    branches:
-      - master
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Mod version'
+        required: true
+        default: '0.0.0'
+  
 jobs:
   release:
     name: Release
@@ -11,9 +15,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Get Version
-        id: get_version
-        run: echo ::set-output name=version::$(cat manifest.json | jq -r '.version')
       - name: Zip
         run: zip -r release.zip *
       - name: Create Release
@@ -22,8 +23,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.get_version.outputs.version }}
-          release_name: Release ${{ steps.get_version.outputs.version }}
+          tag_name: ${{ github.event.inputs.version }}
+          release_name: Release ${{ github.event.inputs.version }}
           draft: false
           prerelease: false
       - name: Upload Release Asset
